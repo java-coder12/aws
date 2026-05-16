@@ -1,0 +1,11 @@
+sudo dnf update -y
+
+sudo dnf install git nodejs -y
+
+git clone https://github.com/AbhiDevOps369/student-management-app.git
+
+cd student-management-app
+
+npm install
+
+nohup node server.js &

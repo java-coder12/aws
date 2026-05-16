@@ -1,0 +1,61 @@
+﻿
+✅ NOW ALL COMMANDS STEP-BY-STEP
+
+1 UPDATE SYSTEM
+sudo dnf update -y
+Updates installed system packages.
+
+2 INSTALL APACHE
+sudo dnf install httpd -y
+Installs Apache web server.
+
+3 START APACHE
+sudo systemctl start httpd
+Starts Apache service.
+
+4 ENABLE APACHE
+sudo systemctl enable httpd
+Automatically starts Apache after reboot.
+
+5 INSTALL GIT
+sudo dnf install git -y
+Installs Git version control tool.
+
+6 GO TO HOME DIRECTORY
+cd ~
+Moves to home folder.
+
+7 CLONE GITHUB REPOSITORY
+git clone https://github.com/AbhiDevOps369/cc-static-website.git
+Downloads GitHub project into VM.
+
+8 REMOVE DEFAULT WEBSITE FILES
+sudo rm -rf /var/www/html/*
+Deletes default Apache web files.
+
+9 COPY PROJECT FILES
+sudo cp -r ~/cc-static-website/* /var/www/html/
+Copies project files into Apache web root.
+
+10 RESTART APACHE
+sudo systemctl restart httpd
+Reloads Apache with latest project files.
+
+🔥 FOR FUTURE WEBSITE UPDATES
+
+11 GO INSIDE PROJECT
+cd ~/cc-static-website
+Moves into cloned repository.
+
+12 PULL LATEST CHANGES
+git pull origin main
+Downloads latest GitHub updates.
+
+13 COPY UPDATED FILES
+sudo cp -r * /var/www/html/
+Copies updated project files to Apache folder.
+
+14 RESTART APACHE
+sudo systemctl restart httpd
+Reloads updated website.
+

@@ -1,0 +1,35 @@
+✅ AWS Secure File Sharing Commands
+
+1)chmod 400 aws.pem
+Restricts PEM key permissions for secure SSH access.
+
+2)scp -i aws.pem aws.pem ec2-user@PUBLIC_IP_OF_VM1:/home/ec2-user/
+Copies PEM key from local machine to VM-1.
+
+3)ssh -i aws.pem ec2-user@PUBLIC_IP_OF_VM1
+Connects local machine to VM-1 using SSH.
+
+4)chmod 400 aws.pem
+Gives proper permission to PEM key inside VM-1.
+
+5)echo "Hello from VM-1" > file.txt
+Creates sample text file inside VM-1.
+
+ls
+Displays files in current directory.
+
+6)scp -i aws.pem file.txt ec2-user@PRIVATE_IP_OF_VM2:/home/ec2-user/
+Transfers file securely from VM-1 to VM-2 using SCP.
+
+7)ssh -i aws.pem ec2-user@PRIVATE_IP_OF_VM2
+Connects VM-1 to VM-2 using SSH.
+
+8)cat file.txt
+Displays contents of transferred file.
+
+9)chmod 600 file.txt
+Sets secure read/write permission for file owner only.
+
+ls -l
+Displays detailed file permissions.
+

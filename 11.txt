@@ -1,0 +1,15 @@
+1) sudo apt update -y
+2) curl -fsSL https://deb.nodesource.com/setup_20.x | sudo -E bash
+3) sudo apt update nodejs git -y
+4) git clone https://github.com/AbhiDevOps369/E-commerce-app
+5) cd E-commerce-app
+6) npm install
+7) cd client
+8) npm install
+9) npm run build 
+10) cd ..
+11)
+nano .env
+MONGO_URI=mongodb+srv://arkfilmers_db_user:12345@cluster0.8nshzyu.mongodb.net/?appName=Cluster0/products?retryWrites=true&w=majority
+PORT=3000
+12) nohup node server.js &
