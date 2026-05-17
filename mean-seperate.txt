@@ -1,0 +1,45 @@
+✅ BACKEND DEPLOYMENT (EC2)
+
+sudo apt update -y
+curl -fsSL https://deb.nodesource.com/setup_20.x | sudo -E bash -
+sudo apt install nodejs git -y
+git clone https://github.com/AbhiDevOps369/E-commerce-app
+cd E-commerce-app
+npm install
+nano .env
+MONGO_URI=YOUR_MONGO_URI
+PORT=3000
+nohup node server.js &
+
+⸻
+
+✅ FRONTEND DEPLOYMENT (SEPARATE)
+
+sudo apt install apache2 -y
+sudo systemctl start apache2
+sudo systemctl enable apache2
+cd E-commerce-app/client
+npm install
+npm run build
+sudo rm -rf /var/www/html/*
+sudo cp -r dist/* /var/www/html/
+sudo systemctl restart apache2
+
+⸻
+
+🧠 RESULT
+
+Service	Running On
+Frontend	Apache port 80
+Backend	Node.js port 3000
+Database	MongoDB Atlas
+
+⸻
+
+🔥 IMPORTANT
+
+Frontend API calls should point to:
+
+http://BACKEND_PUBLIC_IP:3000
+
+instead of localhost.
