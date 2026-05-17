@@ -1,6 +1,6 @@
 1) sudo apt update -y
 2) curl -fsSL https://deb.nodesource.com/setup_20.x | sudo -E bash
-3) sudo apt update nodejs git -y
+3) sudo apt install nodejs git -y
 4) git clone https://github.com/AbhiDevOps369/E-commerce-app
 5) cd E-commerce-app
 6) npm install
