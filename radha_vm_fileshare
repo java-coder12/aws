@@ -1,0 +1,393 @@
+
+
+# STEP 1: Create AWS Account
+
+Go to:
+
+* [Amazon AWS](https://aws.amazon.com/?utm_source=chatgpt.com)
+
+Create an account and login to:
+
+* [AWS Console](https://console.aws.amazon.com/?utm_source=chatgpt.com)
+
+---
+
+# STEP 2: Create a VPC (Virtual Private Cloud)
+
+## Open VPC Dashboard
+
+Search:
+`VPC`
+
+Click:
+**Create VPC**
+
+---
+
+## Configure VPC
+
+| Field     | Value       |
+| --------- | ----------- |
+| Name      | MySecureVPC |
+| IPv4 CIDR | 10.0.0.0/16 |
+
+Click:
+**Create VPC**
+
+---
+
+# STEP 3: Create Subnet
+
+Inside VPC dashboard:
+
+## Create Subnet
+
+| Field | Value        |
+| ----- | ------------ |
+| VPC   | MySecureVPC  |
+| Name  | PublicSubnet |
+| CIDR  | 10.0.1.0/24  |
+
+Create subnet.
+
+---
+
+# STEP 4: Create Internet Gateway
+
+## Create IGW
+
+* Name: MyIGW
+
+Attach it to:
+`MySecureVPC`
+
+---
+
+# STEP 5: Create Route Table
+
+## Create Route Table
+
+* Name: MyRouteTable
+
+Associate with:
+`MySecureVPC`
+
+---
+
+## Edit Routes
+
+Add:
+
+| Destination | Target           |
+| ----------- | ---------------- |
+| 0.0.0.0/0   | Internet Gateway |
+
+Associate this route table with:
+`PublicSubnet`
+
+---
+
+# STEP 6: Create Security Group
+
+Security group acts like firewall rules.
+
+## Create Security Group
+
+| Field | Value       |
+| ----- | ----------- |
+| Name  | SecureSG    |
+| VPC   | MySecureVPC |
+
+---
+
+## Add Inbound Rules
+
+| Type | Port | Source |
+| ---- | ---- | ------ |
+| SSH  | 22   | My IP  |
+
+This allows only your computer to access servers securely.
+
+---
+
+# STEP 7: Launch EC2 Instance 1
+
+Go to EC2 Dashboard.
+
+Click:
+**Launch Instance**
+
+---
+
+## Configure Instance
+
+| Field         | Value          |
+| ------------- | -------------- |
+| Name          | SenderVM       |
+| AMI           | Ubuntu Server  |
+| Instance Type | t2.micro       |
+| Key Pair      | Create new key |
+
+Download `.pem` key safely.
+
+---
+
+## Network Settings
+
+| Setting               | Value        |
+| --------------------- | ------------ |
+| VPC                   | MySecureVPC  |
+| Subnet                | PublicSubnet |
+| Auto Assign Public IP | Enable       |
+| Security Group        | SecureSG     |
+
+Launch instance.
+
+---
+
+# STEP 8: Launch EC2 Instance 2
+
+Repeat same process.
+
+| Field | Value      |
+| ----- | ---------- |
+| Name  | ReceiverVM |
+
+Use same:
+
+* VPC
+* Subnet
+* Security Group
+* Key pair
+
+Launch instance.
+
+---
+
+# STEP 9: Connect to VM1 Using SSH
+
+Open terminal in folder containing `.pem` file.
+
+## Give Permission to Key
+
+```bash
+chmod 400 mykey.pem
+```
+
+---
+
+## Connect to SenderVM
+
+```bash
+ssh -i mykey.pem ubuntu@PUBLIC_IP_VM1
+```
+
+---
+
+# STEP 10: Test Communication Between Instances
+
+From VM1:
+
+```bash
+ping PRIVATE_IP_VM2
+```
+
+You should receive replies.
+
+This proves secure communication inside VPC.
+
+---
+
+# STEP 11: Create a File in VM1
+
+Inside SenderVM:
+
+```bash
+echo "Confidential Cloud File" > file.txt
+```
+
+Check:
+
+```bash
+ls
+```
+
+---
+
+# STEP 12: Transfer File Securely Using SCP
+
+## From VM1 to VM2
+
+Command:
+
+```bash
+scp -i mykey.pem file.txt ubuntu@PRIVATE_IP_VM2:/home/ubuntu/
+```
+
+---
+
+# STEP 13: Verify File on VM2
+
+SSH into VM2:
+
+```bash
+ssh -i mykey.pem ubuntu@PUBLIC_IP_VM2
+```
+
+Check:
+
+```bash
+ls
+```
+
+Display content:
+
+```bash
+cat file.txt
+```
+
+Output:
+
+```text
+Confidential Cloud File
+```
+
+---
+
+# STEP 14: Set Proper File Permissions
+
+On VM2:
+
+```bash
+chmod 600 file.txt
+```
+
+Meaning:
+
+| Permission | Access       |
+| ---------- | ------------ |
+| Owner      | Read + Write |
+| Others     | No access    |
+
+---
+
+# STEP 15: Optional — Use SFTP (More Secure)
+
+Instead of SCP:
+
+```bash
+sftp -i mykey.pem ubuntu@PRIVATE_IP_VM2
+```
+
+Commands inside SFTP:
+
+```bash
+put file.txt
+ls
+bye
+```
+
+---
+
+# Working Flow
+
+![Image](https://images.openai.com/static-rsc-4/2UymMHnq5SPevqfTdzAVTp4zTHu2Pwbf2TKSBWurP-9cItDRw8n7FiKBDSDGNbE9_7kxbPcp8H4ap1ruXJDHKIzlu6HwYflAZrTsbzbbpe_kYXQEW02Hw6eDWZeb8XMtwmsCEF5GqC-sVoUVLCgC8kAumvf97Lz_5vCzLMZXA-MwNMVQD9AKls-8ZdZLaCRX?purpose=fullsize)
+
+![Image](https://images.openai.com/static-rsc-4/cEA6q9VXCMucHkstP3Sbq_4nhv5a6WrU2WXEx8SRKx0gmq_qOD9_Do3biJWePq6nrSjbRt-bkT7Lslgz42YGpbKcsdUCxouA71a9EcZ93TkFDRVsHOqFLLrXtPJWGs3PH1juVWxmd3ogMOYC0Qkzzs0dI-i-glGwGnoM0_kkHQkuEGot-2Adnc-R4la8Qvsk?purpose=fullsize)
+
+![Image](https://images.openai.com/static-rsc-4/Dx4eLt9rEYy1N6dROSD3NDLsoAdTT6UyxsZdOwoqlVY3AQSkKpHl4NPaOlQQbyA7-XUb1m_D9oOpC-CM9uy3GJChByWfa-aK-kx-WonNThikzYWwP88f3I1VnwRYIA9fVmZF2OSoh6uHc2derKJIqUlIJ54-jR0lRXAz4Egu8eWsxnE9QPFpg_Bjh4kPgy3U?purpose=fullsize)
+
+![Image](https://images.openai.com/static-rsc-4/YxyB2nEGXrtJj-_K9ds3Ug3M7TD0Oex4qSsx7623218RHyL3UeAUdWJV32HDOsx_HW8q3KnOu0cKhVxXHSHrkAdcvbhYOig7xTzYbqDDTFQET2xlTKH0XOFCcNUBVmLk4NJ2yNzCSC2MtRRMx8odUoLzfMnWGVMOUgWPd7F2ycYTR-dOgV7MD0hE5iRaJqdv?purpose=fullsize)
+
+![Image](https://images.openai.com/static-rsc-4/F8j9veEUZF5_CXXcpC8-BZRtWQytJ8bcWcWGwVIg5onz3SnsZxs8LgMZuxnvcU4JS-EsMF14hVxCGekidzfWN8sn2VTBSDQaKlz3lSmHpQ4KKrNqdDAL0UCCYlp5__enjkKtIIl1_rXXCKJb5fxBuyfyswC-0zsrYFlwTLRhrNzof_xE1So0KS0kv0H1icQ5?purpose=fullsize)
+
+![Image](https://images.openai.com/static-rsc-4/CVTe2o65Vf7EpAYemZXenvRU9DW5aS88SMwmKFpC8rRuzPhsmHtfdfwb2V4cjqRvWD8hYrTYPQmiOi1CKYkjCeyMey5wL5fglYYFCwIDkbDhrTBze9PRQwcZP4djOxvDoTzQ2T1aWljb9QHguIvcwOfwKL3L9yn2bRFNsRH5aTLrj6pJPxtzwbIqc4Kfzl1N?purpose=fullsize)
+
+---
+
+# Security Features Implemented
+
+| Feature                  | Purpose                      |
+| ------------------------ | ---------------------------- |
+| VPC                      | Isolated private network     |
+| Security Group           | Firewall protection          |
+| SSH Keys                 | Password-less secure login   |
+| SCP/SFTP                 | Encrypted file transfer      |
+| Private IP Communication | Internal secure traffic      |
+| File Permissions         | Restrict unauthorized access |
+
+---
+
+# Commands Summary
+
+```bash
+chmod 400 mykey.pem
+
+ssh -i mykey.pem ubuntu@PUBLIC_IP_VM1
+
+ping PRIVATE_IP_VM2
+
+echo "Confidential Cloud File" > file.txt
+
+scp -i mykey.pem file.txt ubuntu@PRIVATE_IP_VM2:/home/ubuntu/
+
+ssh -i mykey.pem ubuntu@PUBLIC_IP_VM2
+
+cat file.txt
+
+chmod 600 file.txt
+```
+
+---
+
+# Expected Output / Result
+
+* Two cloud instances communicate securely
+* Files transferred successfully
+* Access controlled using permissions
+* Encrypted communication established
+
+---
+
+# Viva Questions
+
+## What is VPC?
+
+A logically isolated virtual network in cloud.
+
+---
+
+## Why use SCP?
+
+To securely transfer files using SSH encryption.
+
+---
+
+## Difference between Public IP and Private IP?
+
+| Public IP                | Private IP            |
+| ------------------------ | --------------------- |
+| Accessible from internet | Internal network only |
+
+---
+
+## Why use Security Groups?
+
+To control inbound and outbound traffic.
+
+---
+
+## What does chmod 600 mean?
+
+Only owner can read/write file.
+
+---
+
+# Conclusion
+
+Successfully created:
+
+* Secure cloud network
+* Two communicating cloud instances
+* Encrypted file transfer system
+* Access-controlled secure sharing environment
